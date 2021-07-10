@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Estados</h1>
+            <h1>Municipios de {{ selectedStates }}</h1>
         <div class="city" 
             v-for="city of showing" 
             :key="city.id"
