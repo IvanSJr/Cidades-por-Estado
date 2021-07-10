@@ -1,10 +1,11 @@
 <template>
     <div>
-        <h1>Cidades da Bahia</h1>
+        <h1>Estados</h1>
         <div class="city" 
             v-for="city of showing" 
-            :key="city"
+            :key="city.id"
             >{{ city.nome }}</div>
+
         <button v-if="showing.length === 5" @click="showAllCities">Mostrar todas</button>
         <button v-else @click="hideCities">Mostrar menos</button>
     </div>
@@ -12,23 +13,32 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     data(){
         return {
             cities: [],
             showing: [],
+            selectedStates: ``,
         }
     },
     mounted() {
+        this.selectedStates = this.$route.params.id
         this.getPartialCitiesFromBahia()
+    },
+    watch: {
+        '$route' (to, from){
+            this.selectedStates = to.params.id
+            this.getPartialCitiesFromBahia()
+        }
     },
     methods: {
         async getCitiesFromBahia() {
-            const endpoint = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/BA/municipios"
-            await fetch(endpoint)
-                .then(response => response.json())
-                .then(json => {
-                    this.cities = json
+            const endpoint = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${this.selectedStates}/municipios`
+            await axios.get(endpoint)
+                .then(response => {
+                    this.cities = response.data
                 })
         },
 
